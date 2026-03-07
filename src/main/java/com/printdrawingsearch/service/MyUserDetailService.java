@@ -1,8 +1,8 @@
 
 package com.printdrawingsearch.service;
 
-import java.util.Optional;
-
+import com.printdrawingsearch.model.MyUser;
+import com.printdrawingsearch.repository.MyUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.printdrawingsearch.model.MyUser;
-import com.printdrawingsearch.repository.MyUserRepository;
+import java.util.Optional;
 
 /**
  * Service class for managing user details.
@@ -22,6 +21,11 @@ import com.printdrawingsearch.repository.MyUserRepository;
 public class MyUserDetailService implements UserDetailsService {
 	Logger logger = LoggerFactory.getLogger(MyUserDetailService.class.getName());
 	/** The my user repository. */
+
+	public MyUserDetailService(MyUserRepository myUserRepository) {
+		this.myUserRepository = myUserRepository;
+	}
+
 	@Autowired
 	private MyUserRepository myUserRepository;
 
@@ -35,11 +39,13 @@ public class MyUserDetailService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		logger.trace("Entered......loadUserByUsername() ");
+		System.out.println("Entered......loadUserByUsername() ");
 
 		Optional<MyUser> user = myUserRepository.findByUsername(username);
 		// If the username is found then an object of the "UserDetails" Interface is
 		// created using the username and password
 		if (user.isPresent()) {
+			System.out.println("User is present..............");
 			var userObj = user.get();
 			// uses the "User" class "builder()" method to create a "UserBuiler"
 			// the "UserBuilder" has the "username()" and "password()" and "roles()" methods
@@ -51,6 +57,8 @@ public class MyUserDetailService implements UserDetailsService {
 					.roles(getRoles(userObj)).build();
 
 		} else {
+
+			System.out.println("User is not found..............");
 			logger.trace("Exited......loadUserByUsername() ");
 			throw new UsernameNotFoundException(username);
 		}

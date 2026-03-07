@@ -1,5 +1,7 @@
 package com.printdrawingsearch.security;
 
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +13,15 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.printdrawingsearch.service.MyUserDetailService;
 
@@ -48,28 +52,40 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-		// we disable csrf to enable post request
 		return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-
-				// lambda expression uses the httpSecurity.authorizeHttpRequests method with
-				// "registry" as an argument to defined the authorization rules yeah
-
-				.authorizeHttpRequests(registry -> {
-
-					registry.requestMatchers("/home", "/register/**", "/api/authenticate").permitAll();
-
+				.cors(cors -> cors.configurationSource(corsConfigurationSource())).authorizeHttpRequests(registry -> {
+					registry.requestMatchers("/api/**", "/", "/home", "/register/**", "/api/authenticate", "/logout/**",
+							"/login/**", "/css/**", "/js/**", "/images/**").permitAll(); // Added paths for static resources
 					registry.requestMatchers("/admin/**").hasRole("ADMIN");
-
 					registry.requestMatchers("/user/**").hasRole("USER");
-
 					registry.anyRequest().authenticated();
 				})
-				// Allow all users to access the login page
-				.formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+				// Allow all users to access the login page (if you have one configured)
+				// .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
 				// Add JWT authentication filter before UsernamePasswordAuthenticationFilter
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				// Build the security filter chain
 				.build();
+
+	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		// Allow requests from these origins
+		// Example origins. replace with your origins
+		configuration.setAllowedOrigins(Arrays.asList("https://printsearchapp.scottmichaelandersondev" +
+				".com/api/register/user","https://printsearchapp.scottmichaelandersondev.com","http://127.0.0.1:5500", "http://127.0.0.1:5501", "http://localhost:3000","https://printsearch-frontend-production.up.railway.app","printsearch-frontend.railway.internal"));
+		// Allow these HTTP methods
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		// Allow these headers
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+		// Allow sending credentials (cookies, authentication headers)
+		configuration.setAllowCredentials(true);
+		// Apply this configuration to all endpoints
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 
 	/**
