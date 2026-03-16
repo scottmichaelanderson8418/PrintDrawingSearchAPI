@@ -1,6 +1,7 @@
 
 package com.printdrawingsearch.repository;
 
+import com.printdrawingsearch.model.MyUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.printdrawingsearch.model.PrintDrawing;
+
+import java.util.Optional;
 
 /**
  * This repository interface defines data access operations for PrintDrawing
@@ -39,5 +42,17 @@ public interface PrintDrawingRepository extends JpaRepository<PrintDrawing, Inte
 			@Param("diameterMinValue") float diameterMinValue, @Param("diameterMaxValue") float diameterMaxValue,
 			@Param("faceLengthMinValue") float faceLengthMinValue, @Param("faceLengthMaxValue") float faceLengthMaxValue,
 			Pageable pageable);
+
+
+
+
+	/**
+	 * Find user by username.
+	 *
+	 * @param username the username
+	 * @return the optional
+	 */
+	Optional<PrintDrawing> findByDrawingName(String username);
+
 
 }

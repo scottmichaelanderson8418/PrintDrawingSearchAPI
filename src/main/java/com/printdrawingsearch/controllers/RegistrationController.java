@@ -42,7 +42,8 @@ public class RegistrationController {
 	 * @return a response indicating the result of the registration
 	 */
 	@PostMapping("/register/user")
-	@CrossOrigin(origins = {"https://printsearchapp.scottmichaelandersondev.com/api/register/user","https://printsearchapp" +
+	@CrossOrigin(origins = {"http://127.0.0.1:5501","https://printsearchapp.scottmichaelandersondev" +
+			".com/api/register/user","https://printsearchapp" +
 			".scottmichaelandersondev.com"})
 	public ResponseEntity<String> createUser(@RequestBody MyUserDto myUserDto) {
 
@@ -53,6 +54,7 @@ public class RegistrationController {
 		if (myUserRepository.findByUsername(myUserDto.getUsername()).isPresent()) {
 
 			logger.trace("Exited......createUser() ");
+
 			System.out.println("Exited......createUser() ");
 
 			// Return conflict response if username already exists
@@ -72,9 +74,13 @@ public class RegistrationController {
 		System.out.println("myUserDto.getRole() = " + myUserDto.getRole());
 
 		if (myUserDto.getRole().equals("ADMIN")) {
-			myUserDto.setRole("ADMIN,USER");
+			myUserDto.setRole("ADMIN");
 
 		}
+
+		PressEnter.waitToContinue("if myUserDto.getRole().equals(\"ADMIN\").....");
+
+
 
 		userPrintService.createUser(myUserDto);
 
