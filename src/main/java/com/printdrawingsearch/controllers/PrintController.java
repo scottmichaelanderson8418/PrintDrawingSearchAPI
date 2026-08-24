@@ -227,7 +227,7 @@ public class PrintController {
             ".scottmichaelandersondev.com"})
     public PrintDrawingResponse findByDiameterWithPaginationAndSorting(@PathVariable("pageNo") int pageNo,
                                                                        @PathVariable("pageSize") int pageSize,
-                                                                       @RequestParam(value = "sortfield",
+                                                                       @RequestParam(value = "sortField",
                                                                                required = false) String sortField,
                                                                        @RequestParam(value = "drawingName", required =
                                                                                false) String drawingName,

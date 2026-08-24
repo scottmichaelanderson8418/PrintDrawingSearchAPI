@@ -78,7 +78,7 @@ public class RegistrationController {
 
 		}
 
-		PressEnter.waitToContinue("if myUserDto.getRole().equals(\"ADMIN\").....");
+//		PressEnter.waitToContinue("if myUserDto.getRole().equals(\"ADMIN\").....");
 
 
 

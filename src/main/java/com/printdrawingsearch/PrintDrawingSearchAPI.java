@@ -18,7 +18,7 @@ public class PrintDrawingSearchAPI {
 
 	// private static final LogManager logManager = LogManager.getLogManager();
 
-	/**
+	/**+
 	 * The Main method to start Spring Boot ˚
 	 * 
 	 * @param args these are command-line arguments
